@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "106307767148",
+    "project_id": "online-personal-6476e",
+    "storage_bucket": "online-personal-6476e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:106307767148:android:230aa32006235573f14149",
+        "android_client_info": {
+          "package_name": "com.example.online_personal_finance_manager"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCQ7ZGLH8_FSSjcmpdlnq_nmlO_X1KYxSo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
