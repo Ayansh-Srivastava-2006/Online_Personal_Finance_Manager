@@ -21,4 +21,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "Online_Personal_Finance_Manager"
 include(":app")
- 
+include(":backend")

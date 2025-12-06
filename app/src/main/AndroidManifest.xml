@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" >
 
-    <!-- Required for JDBC network operations -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -27,7 +26,7 @@
         
         <activity android:name=".LoginActivity" />
         <activity android:name=".RegisterActivity" />
-        <activity android:name=".DashboardActivity" />
+        <activity android:name=".HomeActivity" />
         
     </application>
 

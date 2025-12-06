@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="#F0F2F5"
+    android:padding="16dp">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Transactions"
+            android:textSize="24sp"
+            android:textColor="#2C3E50"
+            android:textStyle="bold"
+            android:layout_centerVertical="true"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentEnd="true">
+
+            <Button
+                android:id="@+id/btnExport"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Export CSV"
+                android:backgroundTint="#27AE60"
+                android:textColor="#FFFFFF"
+                android:layout_marginEnd="8dp"
+                style="?android:attr/buttonBarStyle"/>
+
+            <Button
+                android:id="@+id/btnAddTransaction"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="+ Add"
+                android:backgroundTint="#1E90FF"
+                android:textColor="#FFFFFF"/>
+        </LinearLayout>
+    </RelativeLayout>
+
+    <!-- Filters Container (Card) -->
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="16dp"
+        app:cardCornerRadius="8dp"
+        app:cardElevation="2dp"
+        xmlns:app="http://schemas.android.com/apk/res-auto">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:padding="16dp">
+            
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Filter Transactions"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp"/>
+            
+            <EditText
+                android:id="@+id/etSearch" 
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:hint="Search by description..."
+                android:padding="10dp"
+                android:background="@drawable/edit_text_bg"
+                android:layout_marginBottom="8dp"/>
+                
+        </LinearLayout>
+    </androidx.cardview.widget.CardView>
+
+    <!-- Transactions List Header -->
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="#2C3E50"
+        android:padding="12dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:text="Date"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+            
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:text="Description"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"/>
+            
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1.5"
+            android:text="Amount"
+            android:textColor="#FFFFFF"
+            android:textStyle="bold"
+            android:gravity="end"/>
+    </LinearLayout>
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <LinearLayout
+            android:id="@+id/transactionsContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:background="#FFFFFF"/>
+    </ScrollView>
+
+</LinearLayout>

@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.online_personal_finance_manager.backend.FinanceManager;
@@ -19,27 +18,25 @@ public class LoginActivity extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        EditText etUsername = findViewById(R.id.etUsername);
+        EditText etEmail = findViewById(R.id.etUsername); // Assuming this is used for email now
         EditText etPassword = findViewById(R.id.etPassword);
         Button btnLogin = findViewById(R.id.btnLogin);
-        TextView tvRegisterHere = findViewById(R.id.tvRegisterHere);
-        TextView tvBackToHome = findViewById(R.id.tvBackToHome);
 
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                String username = etUsername.getText().toString();
+                String email = etEmail.getText().toString();
                 String password = etPassword.getText().toString();
 
-                if (username.isEmpty() || password.isEmpty()) {
+                if (email.isEmpty() || password.isEmpty()) {
                     Toast.makeText(LoginActivity.this, "Please fill all fields", Toast.LENGTH_SHORT).show();
                 } else {
-                    FinanceManager.getInstance().login(username, password, new FinanceManager.Callback<User>() {
+                    FinanceManager.getInstance().login(email, password, new FinanceManager.Callback<User>() {
                         @Override
                         public void onResult(User result) {
                             runOnUiThread(() -> {
-                                Toast.makeText(LoginActivity.this, "Welcome back, " + result.getUsername(), Toast.LENGTH_SHORT).show();
-                                Intent intent = new Intent(LoginActivity.this, DashboardActivity.class);
+                                Toast.makeText(LoginActivity.this, "Welcome back, " + result.getEmail(), Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(LoginActivity.this, HomeActivity.class);
                                 intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
                                 startActivity(intent);
                                 finish();
@@ -54,22 +51,6 @@ public class LoginActivity extends Activity {
                         }
                     });
                 }
-            }
-        });
-
-        tvRegisterHere.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intent = new Intent(LoginActivity.this, RegisterActivity.class);
-                startActivity(intent);
-                finish(); 
-            }
-        });
-
-        tvBackToHome.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                finish(); 
             }
         });
     }

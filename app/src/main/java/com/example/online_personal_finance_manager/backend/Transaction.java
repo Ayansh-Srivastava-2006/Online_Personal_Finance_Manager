@@ -1,70 +1,46 @@
 package com.example.online_personal_finance_manager.backend;
 
+import com.google.firebase.database.IgnoreExtraProperties;
+
 import java.util.Date;
 
+@IgnoreExtraProperties
 public class Transaction {
-    private int transactionId;
-    private int userId;
-    private double amount;
-    private TransactionType type;
-    private String category;
-    private Date date;
+    public String transactionId;
+    public double amount;
+    public TransactionType type;
+    public String category;
+    public long date;
 
-    public Transaction(int transactionId, int userId, double amount, TransactionType type, String category, Date date) {
+    public Transaction() {
+        // Default constructor required for calls to DataSnapshot.getValue(Transaction.class)
+    }
+
+    public Transaction(String transactionId, double amount, TransactionType type, String category, Date date) {
         this.transactionId = transactionId;
-        this.userId = userId;
         this.amount = amount;
         this.type = type;
         this.category = category;
-        this.date = date;
+        this.date = date.getTime();
     }
 
-    // Getters and setters
-    public int getTransactionId() {
+    public String getTransactionId() {
         return transactionId;
-    }
-
-    public void setTransactionId(int transactionId) {
-        this.transactionId = transactionId;
-    }
-
-    public int getUserId() {
-        return userId;
-    }
-
-    public void setUserId(int userId) {
-        this.userId = userId;
     }
 
     public double getAmount() {
         return amount;
     }
 
-    public void setAmount(double amount) {
-        this.amount = amount;
-    }
-
     public TransactionType getType() {
         return type;
-    }
-
-    public void setType(TransactionType type) {
-        this.type = type;
     }
 
     public String getCategory() {
         return category;
     }
 
-    public void setCategory(String category) {
-        this.category = category;
-    }
-
     public Date getDate() {
-        return date;
-    }
-
-    public void setDate(Date date) {
-        this.date = date;
+        return new Date(date);
     }
 }

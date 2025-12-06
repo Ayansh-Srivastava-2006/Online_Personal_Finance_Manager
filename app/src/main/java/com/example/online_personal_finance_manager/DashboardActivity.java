@@ -3,7 +3,6 @@ package com.example.online_personal_finance_manager;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -28,7 +27,6 @@ public class DashboardActivity extends Activity {
 
         User currentUser = FinanceManager.getInstance().getCurrentUser();
         if (currentUser == null) {
-            // Not logged in, redirect to Login
             Toast.makeText(this, "Please login first", Toast.LENGTH_SHORT).show();
             startActivity(new Intent(this, LoginActivity.class));
             finish();
@@ -39,13 +37,9 @@ public class DashboardActivity extends Activity {
         tvMonthlyIncome = findViewById(R.id.tvMonthlyIncome);
         tvMonthlyExpenses = findViewById(R.id.tvMonthlyExpenses);
         tvSavingsRate = findViewById(R.id.tvSavingsRate);
-        ImageButton btnMenu = findViewById(R.id.btnMenu); // Use finding by ID if I added an ID, let's check layout
+        ImageButton btnMenu = findViewById(R.id.btnMenu); 
 
-        // Since I didn't add an ID to the ImageButton in the layout, I'll look it up by type or add ID.
-        // Actually, I should update the layout to add ID to the menu button.
-        // For now, I'll focus on loading data.
-
-        loadDashboardData(currentUser.getUserId());
+        loadDashboardData();
     }
     
     @Override
@@ -53,12 +47,12 @@ public class DashboardActivity extends Activity {
         super.onResume();
         User currentUser = FinanceManager.getInstance().getCurrentUser();
         if (currentUser != null) {
-            loadDashboardData(currentUser.getUserId());
+            loadDashboardData();
         }
     }
 
-    private void loadDashboardData(int userId) {
-        FinanceManager.getInstance().getTransactions(userId, new FinanceManager.Callback<List<Transaction>>() {
+    private void loadDashboardData() {
+        FinanceManager.getInstance().getTransactions(new FinanceManager.Callback<List<Transaction>>() {
             @Override
             public void onResult(List<Transaction> transactions) {
                 FinanceManager.FinancialSummary summary = FinanceManager.getInstance().calculateSummary(transactions);
