@@ -16,20 +16,28 @@ public class TransactionServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         resp.setContentType("application/json");
-        String userIdParam = req.getParameter("userId");
-        
-        if (userIdParam != null) {
+        String sessionId = req.getHeader("Authorization");
+        if (sessionId != null && sessionId.startsWith("Bearer ")) {
+            sessionId = sessionId.substring(7);
+        }
+
+        if (sessionId != null) {
             try {
-                int userId = Integer.parseInt(userIdParam);
-                List<DatabaseHelper.Transaction> transactions = db.getTransactions(userId);
-                resp.getWriter().write(gson.toJson(transactions));
+                DatabaseHelper.User user = db.getUserFromSession(sessionId);
+                if (user != null) {
+                    List<DatabaseHelper.Transaction> transactions = db.getTransactions(user.getId());
+                    resp.getWriter().write(gson.toJson(transactions));
+                } else {
+                    resp.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    resp.getWriter().write("{\"error\": \"Invalid session\"}");
+                }
             } catch (Exception e) {
                 resp.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 resp.getWriter().write("{\"error\": \"" + e.getMessage() + "\"}");
             }
         } else {
             resp.setStatus(HttpServletResponse.SC_BAD_REQUEST);
-            resp.getWriter().write("{\"error\": \"Missing userId parameter\"}");
+            resp.getWriter().write("{\"error\": \"Missing Authorization header\"}");
         }
     }
 
