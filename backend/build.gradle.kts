@@ -12,6 +12,7 @@ dependencies {
     implementation("org.eclipse.jetty:jetty-servlet:11.0.15")
     implementation("com.google.code.gson:gson:2.10.1") // For JSON
     implementation("mysql:mysql-connector-java:8.0.33")
+    implementation("org.mindrot:jbcrypt:0.4") // For password hashing
 }
 
 application {
