@@ -8,12 +8,13 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import org.mindrot.jbcrypt.BCrypt;
 
 public class DatabaseHelper {
-    // Replace with your actual DB credentials
-    private static final String URL = "jdbc:mysql://localhost:3306/finance_db";
-    private static final String USER = "root";
-    private static final String PASSWORD = "password";
+    // DB credentials from environment variables or use defaults
+    private static final String URL = System.getenv("DB_URL") != null ? System.getenv("DB_URL") : "jdbc:mysql://localhost:3306/finance_db";
+    private static final String USER = System.getenv("DB_USER") != null ? System.getenv("DB_USER") : "root";
+    private static final String PASSWORD = System.getenv("DB_PASSWORD") != null ? System.getenv("DB_PASSWORD") : "password";
 
     static {
         try {
@@ -28,30 +29,33 @@ public class DatabaseHelper {
     }
 
     public User login(String username, String password) throws SQLException {
-        String query = "SELECT * FROM users WHERE username = ? AND password = ?";
+        String query = "SELECT * FROM users WHERE username = ?";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, username);
-            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new User(
-                        rs.getInt("user_id"),
-                        rs.getString("username"),
-                        rs.getString("email")
-                );
+                String storedHash = rs.getString("password");
+                if (BCrypt.checkpw(password, storedHash)) {
+                    return new User(
+                            rs.getInt("user_id"),
+                            rs.getString("username"),
+                            rs.getString("email")
+                    );
+                }
             }
         }
         return null;
     }
 
     public void register(String username, String email, String password) throws SQLException {
+        String hashedPassword = BCrypt.hashpw(password, BCrypt.gensalt());
         String query = "INSERT INTO users (username, email, password) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement stmt = conn.prepareStatement(query)) {
             stmt.setString(1, username);
             stmt.setString(2, email);
-            stmt.setString(3, password);
+            stmt.setString(3, hashedPassword);
             stmt.executeUpdate();
         }
     }
