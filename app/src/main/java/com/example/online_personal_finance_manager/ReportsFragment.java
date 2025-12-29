@@ -18,14 +18,13 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.online_personal_finance_manager.backend.FinanceManager;
 import com.example.online_personal_finance_manager.backend.Transaction;
 import com.example.online_personal_finance_manager.backend.TransactionType;
-import com.example.online_personal_finance_manager.backend.User;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public class ReportsFragment extends Fragment {
@@ -54,24 +53,24 @@ public class ReportsFragment extends Fragment {
     }
 
     private void loadReportData() {
-        User user = FinanceManager.getInstance().getCurrentUser();
-        if (user != null) {
-            FinanceManager.getInstance().getTransactions(new FinanceManager.Callback<List<Transaction>>() {
-                @Override
-                public void onResult(List<Transaction> result) {
-                    if (getActivity() != null) {
-                        getActivity().runOnUiThread(() -> {
-                            currentTransactions = result;
-                            processAndDisplayData(result);
-                        });
-                    }
+        FinanceManager.getInstance().getTransactions(new FinanceManager.CustomCallback<List<Transaction>>() {
+            @Override
+            public void onResult(List<Transaction> result) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        currentTransactions = result;
+                        processAndDisplayData(result);
+                    });
                 }
+            }
 
-                @Override
-                public void onError(Exception e) {
+            @Override
+            public void onError(Exception e) {
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), getString(R.string.error_loading_report_data, e.getMessage()), Toast.LENGTH_SHORT).show());
                 }
-            });
-        }
+            }
+        });
     }
 
     private void processAndDisplayData(List<Transaction> transactions) {
@@ -84,13 +83,15 @@ public class ReportsFragment extends Fragment {
                 income += t.getAmount();
             } else {
                 expense += t.getAmount();
-                categoryExpenses.put(t.getCategory(), categoryExpenses.getOrDefault(t.getCategory(), 0.0) + t.getAmount());
+                Double currentAmount = categoryExpenses.get(t.getCategory());
+                double newAmount = (currentAmount != null ? currentAmount : 0.0) + t.getAmount();
+                categoryExpenses.put(t.getCategory(), newAmount);
             }
         }
 
-        tvTotalIncome.setText(String.format("₹%.2f", income));
-        tvTotalExpense.setText(String.format("₹%.2f", expense));
-        tvNetSavings.setText(String.format("₹%.2f", income - expense));
+        tvTotalIncome.setText(String.format(Locale.US, "₹%.2f", income));
+        tvTotalExpense.setText(String.format(Locale.US, "₹%.2f", expense));
+        tvNetSavings.setText(String.format(Locale.US, "₹%.2f", income - expense));
 
         breakdownContainer.removeAllViews();
         for (Map.Entry<String, Double> entry : categoryExpenses.entrySet()) {
@@ -109,7 +110,7 @@ public class ReportsFragment extends Fragment {
         tvCat.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 2f));
 
         TextView tvAmt = new TextView(getContext());
-        tvAmt.setText(String.format("₹%.2f", amount));
+        tvAmt.setText(String.format(Locale.US, "₹%.2f", amount));
         tvAmt.setGravity(android.view.Gravity.END);
         tvAmt.setLayoutParams(new LinearLayout.LayoutParams(0, ViewGroup.LayoutParams.WRAP_CONTENT, 1f));
 
@@ -126,7 +127,7 @@ public class ReportsFragment extends Fragment {
 
     private void printReport() {
         if (getContext() == null || currentTransactions.isEmpty()) {
-            Toast.makeText(getContext(), "No data to print", Toast.LENGTH_SHORT).show();
+            Toast.makeText(getContext(), R.string.no_data_to_print, Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -144,14 +145,16 @@ public class ReportsFragment extends Fragment {
             if (t.getType() == TransactionType.INCOME) income += t.getAmount();
             else {
                 expense += t.getAmount();
-                categoryExpenses.put(t.getCategory(), categoryExpenses.getOrDefault(t.getCategory(), 0.0) + t.getAmount());
+                Double currentAmount = categoryExpenses.get(t.getCategory());
+                double newAmount = (currentAmount != null ? currentAmount : 0.0) + t.getAmount();
+                categoryExpenses.put(t.getCategory(), newAmount);
             }
         }
         
         html.append("<h2>Summary</h2>");
-        html.append("<p><strong>Total Income:</strong> ₹").append(String.format("%.2f", income)).append("</p>");
-        html.append("<p><strong>Total Expenses:</strong> ₹").append(String.format("%.2f", expense)).append("</p>");
-        html.append("<p><strong>Net Savings:</strong> ₹").append(String.format("%.2f", income - expense)).append("</p>");
+        html.append("<p><strong>Total Income:</strong> ₹").append(String.format(Locale.US, "%.2f", income)).append("</p>");
+        html.append("<p><strong>Total Expenses:</strong> ₹").append(String.format(Locale.US, "%.2f", expense)).append("</p>");
+        html.append("<p><strong>Net Savings:</strong> ₹").append(String.format(Locale.US, "%.2f", income - expense)).append("</p>");
         
         html.append("<h2>Expense Breakdown</h2>");
         html.append("<table border='1' style='width:100%; border-collapse: collapse;'>");
@@ -160,11 +163,9 @@ public class ReportsFragment extends Fragment {
         for (Map.Entry<String, Double> entry : categoryExpenses.entrySet()) {
              html.append("<tr>");
              html.append("<td style='padding: 8px;'>").append(entry.getKey()).append("</td>");
-             html.append("<td style='padding: 8px; text-align: right;'>₹").append(String.format("%.2f", entry.getValue())).append("</td>");
-             html.append("</tr>");
+             html.append("<td style='padding: 8px; text-align: right;'>₹").append(String.format(Locale.US, "%.2f", entry.getValue())).append("</td></tr>");
         }
-        html.append("</table>");
-        html.append("</body></html>");
+        html.append("</table></body></html>");
 
         WebView webView = new WebView(getContext());
         webView.loadDataWithBaseURL(null, html.toString(), "text/html", "UTF-8", null);

@@ -1,19 +1,16 @@
 package com.example.online_personal_finance_manager.backend;
 
-import com.google.firebase.database.IgnoreExtraProperties;
-
-@IgnoreExtraProperties
 public class User {
     public String uid;
+    public String fullName;
     public String username;
     public String email;
-    public String password; // For registration only, don't store long term
+    public String password; // This will not be stored in the User object from DB
 
-    public User() {
-    }
-
-    public User(String uid, String email, String password) {
+    public User(String uid, String fullName, String username, String email, String password) {
         this.uid = uid;
+        this.fullName = fullName;
+        this.username = username;
         this.email = email;
         this.password = password;
     }
@@ -22,10 +19,15 @@ public class User {
         return uid;
     }
 
+    public String getFullName() {
+        return fullName;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
     public String getEmail() {
         return email;
     }
-
-    public String getUsername() { return username; }
-    public String getPassword() { return password; }
 }

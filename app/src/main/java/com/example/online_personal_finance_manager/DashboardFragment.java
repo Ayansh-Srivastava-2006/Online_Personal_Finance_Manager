@@ -5,23 +5,20 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.example.online_personal_finance_manager.backend.FinanceManager;
 import com.example.online_personal_finance_manager.backend.Transaction;
-import com.example.online_personal_finance_manager.charts.LineChartView;
-import com.example.online_personal_finance_manager.charts.PieChartView;
 
 import java.util.List;
+import java.util.Locale;
 
 public class DashboardFragment extends Fragment {
 
-    private TextView tvTotalBalance, tvMonthlyIncome, tvMonthlyExpenses, tvSavingsRate;
-    private LineChartView lineChart;
-    private PieChartView pieChart;
+    private TextView tvMonthlyIncome, tvMonthlyExpenses, tvSavingsRate;
 
     @Nullable
     @Override
@@ -33,31 +30,49 @@ public class DashboardFragment extends Fragment {
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        tvTotalBalance = view.findViewById(R.id.tvTotalBalance);
         tvMonthlyIncome = view.findViewById(R.id.tvMonthlyIncome);
         tvMonthlyExpenses = view.findViewById(R.id.tvMonthlyExpenses);
         tvSavingsRate = view.findViewById(R.id.tvSavingsRate);
-        lineChart = view.findViewById(R.id.lineChart);
-        pieChart = view.findViewById(R.id.pieChart);
 
         loadData();
     }
 
     private void loadData() {
-        FinanceManager.getInstance().getTransactions(new FinanceManager.Callback<List<Transaction>>() {
+        FinanceManager.getInstance().getTransactions(new FinanceManager.CustomCallback<List<Transaction>>() {
             @Override
             public void onResult(List<Transaction> transactions) {
-                if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> {
-                        // Update summary cards and charts
-                        // This logic remains the same as it operates on the list of transactions
-                        // ...
-                    });
-                }
+                if (getActivity() == null) return;
+
+                getActivity().runOnUiThread(() -> {
+                    if (getView() == null) return; // Ensure fragment view is available
+
+                    if (transactions == null || transactions.isEmpty()) {
+                        // Handle empty state, maybe show zeros
+                        tvMonthlyIncome.setText(String.format(Locale.US, "₹%.2f", 0.0));
+                        tvMonthlyExpenses.setText(String.format(Locale.US, "₹%.2f", 0.0));
+                        tvSavingsRate.setText(String.format(Locale.US, "%.2f%%", 0.0));
+                        return;
+                    }
+
+                    FinanceManager.FinancialSummary summary = FinanceManager.getInstance().calculateSummary(transactions);
+
+                    tvMonthlyIncome.setText(String.format(Locale.US, "₹%.2f", summary.totalIncome));
+                    tvMonthlyExpenses.setText(String.format(Locale.US, "₹%.2f", summary.totalExpenses));
+                    
+                    double savingsRate = summary.totalIncome > 0 ? (summary.netSavings / summary.totalIncome) * 100 : 0;
+                    tvSavingsRate.setText(String.format(Locale.US, "%.2f%%", savingsRate));
+                });
             }
 
             @Override
             public void onError(Exception e) {
+                 if (getActivity() == null) return;
+                 
+                 getActivity().runOnUiThread(() -> {
+                    if (getContext() != null) {
+                        Toast.makeText(getContext(), getString(R.string.error_loading_dashboard_data, e.getMessage()), Toast.LENGTH_SHORT).show();
+                    }
+                });
             }
         });
     }
