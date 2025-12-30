@@ -1,15 +1,30 @@
+# Android and Gradle
+*.apk
+*.aab
+*.ap_
+*.aar
+*.dex
+/build/
+/app/build/
+/server/build/
+/capture_dependencies.txt
+.gradle/
+gradle-app.setting
+/app/src/main/res/raw/
 *.iml
-.gradle
-/local.properties
-/.idea/caches
-/.idea/libraries
-/.idea/modules.xml
-/.idea/workspace.xml
-/.idea/navEditor.xml
-/.idea/assetWizardSettings.xml
-.DS_Store
-/build
-/captures
-.externalNativeBuild
-.cxx
+.idea/
 local.properties
+captures/
+*.keystore
+
+# Java
+*.class
+
+# Log files
+*.log
+
+# Mac
+.DS_Store
+
+# Windows
+Thumbs.db
