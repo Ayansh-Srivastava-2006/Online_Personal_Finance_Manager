@@ -7,8 +7,11 @@ import com.example.online_personal_finance_manager.backend.TransactionType;
 import com.example.online_personal_finance_manager.backend.User;
 import retrofit2.Call;
 import retrofit2.http.Body;
+import retrofit2.http.DELETE;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
+import retrofit2.http.PUT;
+import retrofit2.http.Path;
 
 import java.util.List;
 
@@ -25,6 +28,12 @@ public interface ApiService {
     @POST("accounts")
     Call<AccountResponse> addAccount(@Body AccountRequest request);
 
+    @PUT("accounts/{id}")
+    Call<Void> updateAccount(@Path("id") String accountId, @Body AccountRequest request);
+
+    @DELETE("accounts/{id}")
+    Call<Void> deleteAccount(@Path("id") String accountId);
+
     @GET("transactions")
     Call<List<TransactionResponse>> getTransactions();
 
@@ -36,6 +45,12 @@ public interface ApiService {
 
     @POST("budgets")
     Call<BudgetResponse> addBudget(@Body BudgetRequest request);
+
+    @PUT("budgets/{id}")
+    Call<Void> updateBudget(@Path("id") String budgetId, @Body BudgetRequest request);
+
+    @DELETE("budgets/{id}")
+    Call<Void> deleteBudget(@Path("id") String budgetId);
 
     // Request/Response classes
     class RegisterRequest {

@@ -75,17 +75,18 @@ public class LineChartView extends View {
         float maxIncome = incomeData.isEmpty() ? 0 : Collections.max(incomeData);
         float maxExpense = expenseData.isEmpty() ? 0 : Collections.max(expenseData);
         float maxValue = Math.max(maxIncome, maxExpense);
-        if (maxValue == 0) maxValue = 10000; // Default max if no data
+        if (maxValue == 0)
+            maxValue = 10000; // Default max if no data
 
         // Draw horizontal axis lines (Y-axis grid)
         for (int i = 0; i <= 4; i++) {
             float y = padding + (chartHeight * i / 4f);
             canvas.drawLine(padding, y, padding + chartWidth, y, axisPaint);
-            canvas.drawText(String.format("%.0f", maxValue * (1 - (float)i / 4)), padding - 40, y + 10, textPaint);
+            canvas.drawText(String.format("%.0f", maxValue * (1 - (float) i / 4)), padding - 40, y + 10, textPaint);
         }
 
         // Draw X-axis labels
-        float xStep = chartWidth / (labels.size() - 1);
+        float xStep = labels.size() > 1 ? chartWidth / (labels.size() - 1) : chartWidth;
         for (int i = 0; i < labels.size(); i++) {
             float x = padding + (i * xStep);
             canvas.drawText(labels.get(i), x, chartHeight + padding + 40, textPaint);

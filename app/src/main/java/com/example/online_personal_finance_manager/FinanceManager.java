@@ -86,7 +86,6 @@ public class FinanceManager {
                     String errorMsg = "Invalid email or password";
                     if (response.errorBody() != null) {
                         try {
-                            // Try to parse error response
                             errorMsg = response.errorBody().string();
                         } catch (Exception e) {
                             errorMsg = "Login failed: " + response.code();
@@ -250,13 +249,55 @@ public class FinanceManager {
     }
 
     public void updateAccount(Account account, CustomCallback<Boolean> callback) {
-        // Account updates should be handled through the API in the future
-        callback.onError(new Exception("Account update not yet implemented via API"));
+        apiService.updateAccount(account.getAccountId(), new ApiService.AccountRequest(account.getAccountId(), account.getName(), account.getType(), account.getBalance())).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onResult(true);
+                } else {
+                    String errorMsg = "Failed to update account";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            errorMsg = "Failed to update account: HTTP " + response.code();
+                        }
+                    }
+                    callback.onError(new Exception(errorMsg));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(new Exception("Network error: " + t.getMessage(), t));
+            }
+        });
     }
 
     public void deleteAccount(String accountId, CustomCallback<Boolean> callback) {
-        // Account deletion should be handled through the API in the future
-        callback.onError(new Exception("Account deletion not yet implemented via API"));
+        apiService.deleteAccount(accountId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onResult(true);
+                } else {
+                    String errorMsg = "Failed to delete account";
+                     if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            errorMsg = "Failed to delete account: HTTP " + response.code();
+                        }
+                    }
+                    callback.onError(new Exception(errorMsg));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(new Exception("Network error: " + t.getMessage(), t));
+            }
+        });
     }
 
     public void getBudgets(CustomCallback<List<Budget>> callback) {
@@ -328,13 +369,55 @@ public class FinanceManager {
     }
 
     public void updateBudget(Budget budget, CustomCallback<Boolean> callback) {
-        // Budget updates should be handled through the API in the future
-        callback.onError(new Exception("Budget update not yet implemented via API"));
+        apiService.updateBudget(budget.getBudgetId(), new ApiService.BudgetRequest(budget.getBudgetId(), budget.getCategory(), budget.getAmount(), budget.getSpent())).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onResult(true);
+                } else {
+                    String errorMsg = "Failed to update budget";
+                    if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            errorMsg = "Failed to update budget: HTTP " + response.code();
+                        }
+                    }
+                    callback.onError(new Exception(errorMsg));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(new Exception(t));
+            }
+        });
     }
 
     public void deleteBudget(String budgetId, CustomCallback<Boolean> callback) {
-        // Budget deletion should be handled through the API in the future
-        callback.onError(new Exception("Budget deletion not yet implemented via API"));
+        apiService.deleteBudget(budgetId).enqueue(new Callback<Void>() {
+            @Override
+            public void onResponse(Call<Void> call, Response<Void> response) {
+                if (response.isSuccessful()) {
+                    callback.onResult(true);
+                } else {
+                   String errorMsg = "Failed to delete budget";
+                     if (response.errorBody() != null) {
+                        try {
+                            errorMsg = response.errorBody().string();
+                        } catch (Exception e) {
+                            errorMsg = "Failed to delete budget: HTTP " + response.code();
+                        }
+                    }
+                    callback.onError(new Exception(errorMsg));
+                }
+            }
+
+            @Override
+            public void onFailure(Call<Void> call, Throwable t) {
+                callback.onError(new Exception("Network error: " + t.getMessage(), t));
+            }
+        });
     }
     
     public static class FinancialSummary {

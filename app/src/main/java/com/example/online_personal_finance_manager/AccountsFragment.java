@@ -29,7 +29,8 @@ public class AccountsFragment extends Fragment {
 
     @Nullable
     @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container,
+            @Nullable Bundle savedInstanceState) {
         return inflater.inflate(R.layout.fragment_accounts, container, false);
     }
 
@@ -43,17 +44,19 @@ public class AccountsFragment extends Fragment {
     }
 
     private void showAddAccountDialog() {
-        if (getContext() == null) return;
+        if (getContext() == null)
+            return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
-        
+
         final EditText etAccountName = new EditText(getContext());
         etAccountName.setHint(R.string.account_name_hint);
         final EditText etAccountType = new EditText(getContext());
         etAccountType.setHint(R.string.account_type_hint);
         final EditText etBalance = new EditText(getContext());
         etBalance.setHint(R.string.initial_balance_hint);
-        etBalance.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etBalance.setInputType(
+                android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -63,37 +66,51 @@ public class AccountsFragment extends Fragment {
         layout.addView(etBalance);
 
         builder.setView(layout)
-            .setTitle(R.string.add_new_account)
-            .setPositiveButton(R.string.add, (dialog, id) -> {
-                String name = etAccountName.getText().toString();
-                String type = etAccountType.getText().toString();
-                String balanceStr = etBalance.getText().toString();
-                if (!name.isEmpty() && !type.isEmpty() && !balanceStr.isEmpty()) {
-                    double balance = Double.parseDouble(balanceStr);
-                    String accountId = UUID.randomUUID().toString();
-                    Account newAccount = new Account(accountId, name, type, balance);
-                    FinanceManager.getInstance().addAccount(newAccount, new FinanceManager.CustomCallback<Boolean>() {
-                        @Override
-                        public void onResult(Boolean result) {
-                            if(getActivity() != null) {
-                                getActivity().runOnUiThread(() -> {
-                                    Toast.makeText(getContext(), R.string.account_added, Toast.LENGTH_SHORT).show();
-                                    loadAccounts();
-                                });
-                            }
+                .setTitle(R.string.add_new_account)
+                .setPositiveButton(R.string.add, (dialog, id) -> {
+                    String name = etAccountName.getText().toString();
+                    String type = etAccountType.getText().toString();
+                    String balanceStr = etBalance.getText().toString();
+                    if (!name.isEmpty() && !type.isEmpty() && !balanceStr.isEmpty()) {
+                        double balance;
+                        try {
+                            balance = Double.parseDouble(balanceStr);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), R.string.invalid_number_format, Toast.LENGTH_SHORT).show();
+                            return;
                         }
+                        String accountId = UUID.randomUUID().toString();
+                        Account newAccount = new Account(accountId, name, type, balance);
+                        FinanceManager.getInstance().addAccount(newAccount,
+                                new FinanceManager.CustomCallback<Boolean>() {
+                                    @Override
+                                    public void onResult(Boolean result) {
+                                        if (getActivity() != null) {
+                                            getActivity().runOnUiThread(() -> {
+                                                Toast.makeText(getContext(), R.string.account_added, Toast.LENGTH_SHORT)
+                                                        .show();
+                                                loadAccounts();
+                                            });
+                                        }
+                                    }
 
-                        @Override
-                        public void onError(Exception e) {
-                             if(getActivity() != null) {
-                                getActivity().runOnUiThread(() -> Toast.makeText(getContext(), getString(R.string.error_adding_account, e.getMessage()), Toast.LENGTH_SHORT).show());
-                            }
-                        }
-                    });
-                }
-            })
-            .setNegativeButton(R.string.cancel, null);
-        
+                                    @Override
+                                    public void onError(Exception e) {
+                                        if (getActivity() != null) {
+                                            getActivity()
+                                                    .runOnUiThread(() -> Toast
+                                                            .makeText(getContext(),
+                                                                    getString(R.string.error_adding_account,
+                                                                            e.getMessage()),
+                                                                    Toast.LENGTH_SHORT)
+                                                            .show());
+                                        }
+                                    }
+                                });
+                    }
+                })
+                .setNegativeButton(R.string.cancel, null);
+
         AlertDialog dialog = builder.create();
         dialog.show();
     }
@@ -109,8 +126,9 @@ public class AccountsFragment extends Fragment {
 
             @Override
             public void onError(Exception e) {
-                 if (getActivity() != null) {
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), getString(R.string.error_loading_accounts, e.getMessage()), Toast.LENGTH_SHORT).show());
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(),
+                            getString(R.string.error_loading_accounts, e.getMessage()), Toast.LENGTH_SHORT).show());
                 }
             }
         });
@@ -124,9 +142,11 @@ public class AccountsFragment extends Fragment {
     }
 
     private void addAccountCard(Account account) {
-        if (getContext() == null) return;
+        if (getContext() == null)
+            return;
         CardView card = new CardView(getContext());
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT,
+                ViewGroup.LayoutParams.WRAP_CONTENT);
         params.setMargins(0, 0, 0, 16);
         card.setLayoutParams(params);
         card.setRadius(16);
@@ -146,7 +166,7 @@ public class AccountsFragment extends Fragment {
         balance.setPadding(0, 8, 0, 16);
 
         LinearLayout buttonRow = createButtonRow(account);
-        
+
         content.addView(title);
         content.addView(balance);
         content.addView(buttonRow);
@@ -166,14 +186,15 @@ public class AccountsFragment extends Fragment {
         Button deleteButton = new Button(getContext());
         deleteButton.setText(R.string.delete);
         deleteButton.setOnClickListener(v -> showDeleteConfirmation(account));
-        
+
         buttonRow.addView(editButton);
         buttonRow.addView(deleteButton);
         return buttonRow;
     }
 
     private void showEditAccountDialog(Account account) {
-        if (getContext() == null) return;
+        if (getContext() == null)
+            return;
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
@@ -183,7 +204,8 @@ public class AccountsFragment extends Fragment {
         etAccountType.setText(account.getType());
         final EditText etBalance = new EditText(getContext());
         etBalance.setText(String.valueOf(account.getBalance()));
-        etBalance.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        etBalance.setInputType(
+                android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
 
         LinearLayout layout = new LinearLayout(getContext());
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -199,60 +221,77 @@ public class AccountsFragment extends Fragment {
                     String type = etAccountType.getText().toString();
                     String balanceStr = etBalance.getText().toString();
                     if (!name.isEmpty() && !type.isEmpty() && !balanceStr.isEmpty()) {
-                        double balance = Double.parseDouble(balanceStr);
+                        double balance;
+                        try {
+                            balance = Double.parseDouble(balanceStr);
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(getContext(), R.string.invalid_number_format, Toast.LENGTH_SHORT).show();
+                            return;
+                        }
                         Account updatedAccount = new Account(account.getAccountId(), name, type, balance);
-                        FinanceManager.getInstance().updateAccount(updatedAccount, new FinanceManager.CustomCallback<Boolean>() {
-                            @Override
-                            public void onResult(Boolean result) {
-                                if (getActivity() != null) {
-                                    getActivity().runOnUiThread(() -> {
-                                        Toast.makeText(getContext(), R.string.account_updated, Toast.LENGTH_SHORT).show();
-                                        loadAccounts();
-                                    });
-                                }
-                            }
+                        FinanceManager.getInstance().updateAccount(updatedAccount,
+                                new FinanceManager.CustomCallback<Boolean>() {
+                                    @Override
+                                    public void onResult(Boolean result) {
+                                        if (getActivity() != null) {
+                                            getActivity().runOnUiThread(() -> {
+                                                Toast.makeText(getContext(), R.string.account_updated,
+                                                        Toast.LENGTH_SHORT).show();
+                                                loadAccounts();
+                                            });
+                                        }
+                                    }
 
-                            @Override
-                            public void onError(Exception e) {
-                                if (getActivity() != null) {
-                                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), getString(R.string.error_updating_account, e.getMessage()), Toast.LENGTH_SHORT).show());
-                                }
-                            }
-                        });
+                                    @Override
+                                    public void onError(Exception e) {
+                                        if (getActivity() != null) {
+                                            getActivity()
+                                                    .runOnUiThread(() -> Toast
+                                                            .makeText(getContext(),
+                                                                    getString(R.string.error_updating_account,
+                                                                            e.getMessage()),
+                                                                    Toast.LENGTH_SHORT)
+                                                            .show());
+                                        }
+                                    }
+                                });
                     }
                 })
                 .setNegativeButton(R.string.cancel, null);
-        
+
         AlertDialog dialog = builder.create();
         dialog.show();
     }
 
-
     private void showDeleteConfirmation(Account account) {
-        new AlertDialog.Builder(getContext())
-            .setTitle(R.string.delete_account)
-            .setMessage(getString(R.string.delete_account_confirmation, account.getName()))
-            .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteAccount(account.getAccountId()))
-            .setNegativeButton(android.R.string.no, null)
-            .setIcon(android.R.drawable.ic_dialog_alert)
-            .show();
+        if (getContext() == null)
+            return;
+        new AlertDialog.Builder(requireContext())
+                .setTitle(R.string.delete_account)
+                .setMessage(getString(R.string.delete_account_confirmation, account.getName()))
+                .setPositiveButton(android.R.string.yes, (dialog, which) -> deleteAccount(account.getAccountId()))
+                .setNegativeButton(android.R.string.no, null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 
     private void deleteAccount(String accountId) {
         FinanceManager.getInstance().deleteAccount(accountId, new FinanceManager.CustomCallback<Boolean>() {
             @Override
             public void onResult(Boolean result) {
-                if(getActivity() != null) {
+                if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getContext(), R.string.account_deleted, Toast.LENGTH_SHORT).show();
                         loadAccounts(); // Refresh the list
                     });
                 }
             }
+
             @Override
             public void onError(Exception e) {
-                if(getActivity() != null) {
-                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(), getString(R.string.error_deleting_account, e.getMessage()), Toast.LENGTH_SHORT).show());
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> Toast.makeText(getContext(),
+                            getString(R.string.error_deleting_account, e.getMessage()), Toast.LENGTH_SHORT).show());
                 }
             }
         });

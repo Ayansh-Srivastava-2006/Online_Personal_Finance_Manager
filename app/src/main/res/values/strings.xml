@@ -63,4 +63,7 @@
     <string name="account_deleted">Account deleted</string>
     <string name="error_deleting_account">Error deleting account: %s</string>
 
+    <!-- Common -->
+    <string name="invalid_number_format">Invalid number format</string>
+
 </resources>

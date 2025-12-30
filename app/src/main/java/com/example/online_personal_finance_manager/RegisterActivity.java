@@ -1,6 +1,5 @@
 package com.example.online_personal_finance_manager;
 
-import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
@@ -9,9 +8,11 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+
 import com.example.online_personal_finance_manager.backend.User;
 
-public class RegisterActivity extends Activity {
+public class RegisterActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,7 +35,8 @@ public class RegisterActivity extends Activity {
             String password = etPassword.getText().toString();
             String confirmPassword = etConfirmPassword.getText().toString();
 
-            if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty() || confirmPassword.isEmpty()) {
+            if (fullName.isEmpty() || username.isEmpty() || email.isEmpty() || password.isEmpty()
+                    || confirmPassword.isEmpty()) {
                 Toast.makeText(RegisterActivity.this, R.string.please_fill_all_fields, Toast.LENGTH_SHORT).show();
                 return;
             }
@@ -44,30 +46,33 @@ public class RegisterActivity extends Activity {
                 return;
             }
 
-            FinanceManager.getInstance().register(fullName, username, email, password, new FinanceManager.CustomCallback<User>() {
-                @Override
-                public void onResult(User result) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(RegisterActivity.this, R.string.registration_successful, Toast.LENGTH_SHORT).show();
-                        Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
-                        intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-                        startActivity(intent);
-                        finish();
-                    });
-                }
-
-                @Override
-                public void onError(Exception e) {
-                    runOnUiThread(() -> {
-                        String errorMessage = e.getMessage();
-                        if (errorMessage == null || errorMessage.isEmpty()) {
-                            errorMessage = "Registration failed. Please check your connection and try again.";
+            FinanceManager.getInstance().register(fullName, username, email, password,
+                    new FinanceManager.CustomCallback<User>() {
+                        @Override
+                        public void onResult(User result) {
+                            runOnUiThread(() -> {
+                                Toast.makeText(RegisterActivity.this, R.string.registration_successful,
+                                        Toast.LENGTH_SHORT).show();
+                                Intent intent = new Intent(RegisterActivity.this, HomeActivity.class);
+                                intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
+                                startActivity(intent);
+                                finish();
+                            });
                         }
-                        Toast.makeText(RegisterActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG).show();
-                        Log.e("RegisterActivity", "Registration error", e);
+
+                        @Override
+                        public void onError(Exception e) {
+                            runOnUiThread(() -> {
+                                String errorMessage = e.getMessage();
+                                if (errorMessage == null || errorMessage.isEmpty()) {
+                                    errorMessage = "Registration failed. Please check your connection and try again.";
+                                }
+                                Toast.makeText(RegisterActivity.this, "Error: " + errorMessage, Toast.LENGTH_LONG)
+                                        .show();
+                                Log.e("RegisterActivity", "Registration error", e);
+                            });
+                        }
                     });
-                }
-            });
         });
 
         tvLoginHere.setOnClickListener(v -> {
