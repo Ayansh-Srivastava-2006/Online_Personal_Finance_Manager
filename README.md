@@ -2,93 +2,160 @@
 
 [![GitHub Repo](https://img.shields.io/badge/repo-Online_Personal_Finance_Manager-blue)](https://github.com/Ayansh-Srivastava-2006/Online_Personal_Finance_Manager) [![License](https://img.shields.io/badge/license-SEE_LICENSE-lightgrey)]()
 
-A polished Android + Java backend app to track income, expenses, accounts, and budgets. This repository contains a native Android client (`app`) and a Java backend server (`server`).
+A full-stack Android application for personal finance management. Track income, expenses, accounts, and budgets with a native Android client and a Java backend server.
 
-Table of contents
+## Table of Contents
 - [Highlights](#highlights)
-- [Screenshots / Demo](#screenshots--demo)
 - [Features](#features)
-- [Tech stack](#tech-stack)
-- [Quickstart (3 minutes)](#quickstart-3-minutes)
-  - [1) Configure the database](#1-configure-the-database)
-  - [2) Build & run the backend](#2-build--run-the-backend)
-  - [3) Run the Android app](#3-run-the-android-app)
-- [API examples](#api-examples)
-- [Development & testing](#development--testing)
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [1. Configure the Database](#1-configure-the-database)
+  - [2. Build & Run the Backend](#2-build--run-the-backend)
+  - [3. Run the Android App](#3-run-the-android-app)
+- [API Endpoints](#api-endpoints)
 - [Troubleshooting](#troubleshooting)
 - [Contributing](#contributing)
-- [License & contact](#license--contact)
+- [License & Contact](#license--contact)
 
-Highlights
-- Clean separation: Android client + Java server
-- Lightweight APIs with token-based auth support
-- Extensible: add providers, accounts, budgets, reporting
-- Designed for local development and CI
+## Highlights
+- 📱 **Native Android Client** - Modern UI with Material Design
+- ☕ **Java Backend Server** - Jetty-based REST API with servlet architecture
+- 🔐 **Secure Authentication** - User registration and login with password hashing
+- 💰 **Financial Management** - Track accounts, transactions, and budgets
+- 🔄 **Real-time Sync** - Data synchronization between client and server
 
-Screenshots / Demo
-- Add a screenshot or GIF named `docs/screenshot.png` or `docs/demo.gif` to this repo and it will display here.
-- Example:
-  ![App screenshot](docs/screenshot.png)
+## Features
+- User registration and login
+- Account management (create, update, delete accounts)
+- Transaction tracking (income & expenses)
+- Budget creation and monitoring
+- Category-based organization
+- Financial summary and reporting
 
-Features
-- User sign-up / login
-- CRUD for accounts, transactions, categories
-- Budget creation and tracking
-- Transaction sync between client and backend
-- Simple reporting & export
+## Tech Stack
 
-Tech stack
-- Android client: Kotlin / Java (Android Studio)
-- Backend: Java + Gradle (see `server` module)
-- Database: MySQL / Postgres / SQLite (configurable)
+| Component | Technology |
+|-----------|------------|
+| **Android Client** | Java, Retrofit, Gson, Material Design |
+| **Backend Server** | Java 17+, Jetty Server, Jakarta Servlets |
+| **Database** | MySQL / PostgreSQL / SQLite |
+| **Build Tool** | Gradle (Kotlin DSL) |
 
-Quickstart (3 minutes)
+## Project Structure
+```
+Online_Personal_Finance_Manager/
+├── app/                          # Android application
+│   └── src/main/java/com/example/online_personal_finance_manager/
+│       ├── api/                  # Retrofit API client & service
+│       ├── backend/              # Data models (User, Account, Transaction, Budget)
+│       ├── LoginActivity.java
+│       ├── RegisterActivity.java
+│       ├── HomeActivity.java
+│       └── FinanceManager.java   # Business logic & API calls
+├── server/                       # Java backend server
+│   └── src/main/java/com/example/finance/backend/
+│       ├── ServerMain.java       # Jetty server entry point
+│       ├── *Servlet.java         # REST API endpoints
+│       ├── FinanceDatabase.java  # Database operations
+│       └── *.java                # Data models & utilities
+├── DATABASE_SETUP.md             # Database setup instructions
+└── README.md
+```
 
-1) Configure the database
-- Open `server/src/main/java/com/example/finance/backend/DatabaseConnection.java` (or `DatabaseManager.java` if present) and update the connection string, username and password.
-- For secure setups prefer environment variables or a `server/src/main/resources/application.properties` file.
-- For full schema and step-by-step DB creation see `DATABASE_SETUP.md`.
+## Getting Started
 
-Example environment variables (recommended)
-- `DB_URL=jdbc:mysql://localhost:3306/yourdbname`
-- `DB_USER=yourusername`
-- `DB_PASS=yourpassword`
+### Prerequisites
+- **Java 17+** (for backend server)
+- **Android Studio** (latest stable version)
+- **MySQL/PostgreSQL** database (or SQLite for development)
+- **Gradle 8.x**
 
-2) Build & run the backend
-- Open a terminal in the `server` directory.
-- Build the project: `./gradlew build` (Linux/Mac) or `gradlew build` (Windows).
-- Run the server: `./gradlew run` or `java -jar build/libs/*.jar`.
-- Default server port: `8080` (confirm in startup logs). API base: `http://localhost:8080`.
+### 1. Configure the Database
+1. Create a database for the application
+2. Update connection settings in `server/src/main/java/com/example/finance/backend/DatabaseConnection.java`
 
-3) Run the Android app
-- Open the project in Android Studio:
-  - File > Open > choose repository root
-  - Let Gradle sync
-- Start an emulator or connect a device, then run the `app` module.
-- Ensure backend is reachable from the device/emulator (use `10.0.2.2` for Android emulator to reach host `localhost`).
-- Install debug APK to a connected device:
+**Recommended: Use environment variables**
+```bash
+export DB_URL=jdbc:mysql://localhost:3306/finance_db
+export DB_USER=your_username
+export DB_PASS=your_password
+```
 
-Troubleshooting
-- DB connection failures:
-  - Verify `DatabaseConnection.java` values or environment variables.
-  - Check DB is running and accepting connections on configured port.
-- Backend not reachable from emulator:
-  - Use `10.0.2.2` (Android emulator) or ensure device is on same network.
-- Gradle build errors:
-  - Run with `--stacktrace` and `--refresh-dependencies`:
+For detailed schema setup, see [`DATABASE_SETUP.md`](DATABASE_SETUP.md).
 
-Contributing
-- Fork, create a branch, add tests, and open a PR with a clear description.
-- Recommended: add `CONTRIBUTING.md` and PR template to the repo.
-- Keep secrets out of source control — use environment variables or CI secrets.
+### 2. Build & Run the Backend
+```bash
+cd server
 
-License & contact
-- See `LICENSE` at the repo root (add one if missing; MIT or Apache-2.0 recommended).
+# Build the project
+./gradlew build          # Linux/macOS
+gradlew build            # Windows
+
+# Run the server
+./gradlew run            # Linux/macOS
+gradlew run              # Windows
+```
+Server starts on **port 8080** by default. Base URL: `http://localhost:8080`
+
+### 3. Run the Android App
+1. Open the project in Android Studio: **File > Open** and select the repository root
+2. Wait for Gradle sync to complete
+3. **Important**: Ensure the backend server is running before launching the app
+4. Run the `app` module on an emulator or connected device
+
+> **Note for Emulator Users**: The Android emulator uses `10.0.2.2` to access the host machine's `localhost`. This is already configured in `ApiClient.java`.
+
+## API Endpoints
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| POST | `/register` | User registration |
+| POST | `/login` | User login |
+| GET | `/accounts` | Get all accounts |
+| POST | `/accounts` | Create new account |
+| PUT | `/accounts/{id}` | Update account |
+| DELETE | `/accounts/{id}` | Delete account |
+| GET | `/transactions` | Get all transactions |
+| POST | `/transactions` | Create new transaction |
+| GET | `/budgets` | Get all budgets |
+| POST | `/budgets` | Create new budget |
+| PUT | `/budgets/{id}` | Update budget |
+| DELETE | `/budgets/{id}` | Delete budget |
+
+## Troubleshooting
+
+### "CLEARTEXT communication not permitted"
+Add `android:usesCleartextTraffic="true"` to `AndroidManifest.xml` (already configured for development).
+
+### "Login Failed: <html>..."
+This means the API endpoint URL is incorrect. Ensure:
+- Backend server is running on port 8080
+- `ApiClient.java` has `BASE_URL = "http://10.0.2.2:8080/"` (no `/api/` suffix)
+
+### Database Connection Failures
+- Verify database credentials in `DatabaseConnection.java`
+- Ensure database server is running and accepting connections
+- Check firewall settings
+
+### Backend Not Reachable from Emulator
+- Use `10.0.2.2` (Android emulator) to reach host `localhost`
+- For physical devices, use your computer's local IP address
+
+### Gradle Build Errors
+```bash
+./gradlew build --stacktrace --refresh-dependencies
+```
+
+## Contributing
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License & Contact
+- See [`LICENSE`](LICENSE) at the repo root
 - Repository: https://github.com/Ayansh-Srivastava-2006/Online_Personal_Finance_Manager
-- For issues and feature requests use GitHub Issues.
-
-Notes
-- Add `docs/` folder with screenshots, API docs (OpenAPI/Swagger) and a `CONTRIBUTING.md` to make the project even more attractive to contributors.
-
-
-
+- For issues and feature requests, use [GitHub Issues](https://github.com/Ayansh-Srivastava-2006/Online_Personal_Finance_Manager/issues)
