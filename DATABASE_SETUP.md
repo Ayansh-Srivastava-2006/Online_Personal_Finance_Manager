@@ -4,24 +4,37 @@
 [//]: # (## Database Configuration)
 
 [//]: # ()
-[//]: # (The backend server requires a MySQL database. Update the connection settings in:)
+[//]: # (The backend server reads its connection settings from system properties first and)
+[//]: # (then environment variables. Set these values before starting the server:)
 
 [//]: # ()
-[//]: # (`server/src/main/java/com/example/finance/backend/DatabaseManager.java`)
+[//]: # (```text)
 
 [//]: # ()
-[//]: # (```java)
+[//]: # (DB_URL=jdbc:mysql://localhost:3308/finance_manager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC)
 
-[//]: # (private static final String URL = "jdbc:mysql://localhost:3308/finance_manager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC";)
+[//]: # (DB_USER=root)
 
-[//]: # (private static final String USER = "root";)
-
-[//]: # (private static final String PASSWORD = "root";)
+[//]: # (DB_PASSWORD=your_database_password)
 
 [//]: # (```)
 
 [//]: # ()
-[//]: # (**⚠️ IMPORTANT**: Change the database credentials before deploying to production!)
+
+[//]: # ()
+[//]: # (`DB_URL` defaults to the value above and `DB_USER` defaults to `root`.)
+[//]: # (The password is required; the server fails fast with a clear error if)
+[//]: # (`DB_PASSWORD` is not set. `DB_PASS` is also accepted for compatibility.)
+[//]: # ()
+[//]: # (On Windows PowerShell:)
+[//]: # ()
+[//]: # (```powershell)
+[//]: # ($env:DB_URL = "jdbc:mysql://localhost:3308/finance_manager?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC")
+[//]: # ($env:DB_USER = "root")
+[//]: # ($env:DB_PASSWORD = "your_database_password")
+[//]: # (```)
+[//]: # ()
+[//]: # (Do not commit credentials or place them directly in Java source code.)
 
 [//]: # ()
 [//]: # (## Database Schema)
@@ -154,4 +167,3 @@
 [//]: # (   SHOW TABLES;)
 
 [//]: # (   ```)
-

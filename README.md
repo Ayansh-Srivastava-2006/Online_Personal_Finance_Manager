@@ -78,9 +78,9 @@ Online_Personal_Finance_Manager/
 
 **Recommended: Use environment variables**
 ```bash
-export DB_URL=jdbc:mysql://localhost:3306/finance_db
+export DB_URL=jdbc:mysql://localhost:3308/finance_manager
 export DB_USER=your_username
-export DB_PASS=your_password
+export DB_PASSWORD=your_password
 ```
 
 For detailed schema setup, see [`DATABASE_SETUP.md`](DATABASE_SETUP.md).
